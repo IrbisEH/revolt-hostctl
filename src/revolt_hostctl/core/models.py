@@ -22,7 +22,7 @@ class Host:
     mac_address: str = ""
 
     # optional
-    network: List[Network] = field(default=list)
+    ip_addresses: List[str] = field(default=list)
 
     # metadata
     os: Optional[str] = None
@@ -35,7 +35,6 @@ class Host:
     def __str__(self):
         return f"revolt {self.name} host"
 
-    # TODO: add Networks description if need
     def __repr__(self):
         return (f"Host("
                 f"_id={self._id} "
