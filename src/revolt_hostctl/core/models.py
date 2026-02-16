@@ -14,6 +14,13 @@ class Network:
     name: Optional[str] = None
     cidr: Optional[str] = None
 
+    def to_dict(self) -> dict:
+        return {
+            "_id": self._id,
+            "name": self.name,
+            "cidr": self.cidr
+        }
+
 
 @dataclass
 class Host:
@@ -32,6 +39,19 @@ class Host:
 
     created_at: datetime = field(default_factory=_utcnow)
     updated_at: datetime = field(default_factory=_utcnow)
+
+    def to_dict(self) -> dict:
+        return {
+            "_id": self._id,
+            "name": self.name,
+            "mac_address": self.mac_address,
+            "ip_addresses": self.ip_addresses,
+            "os": self.os,
+            "os_version": self.os_version,
+            "description": self.description,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at
+        }
 
     def __str__(self):
         return f"revolt {self.name} host"
