@@ -57,24 +57,24 @@ class Storage:
         for item in self.networks.values():
             yield item
 
-    def get_networks(self, _id=None):
+    def get_network(self, _id=None):
         if _id is None:
             raise Exception('Invalid storage id')
         return self.networks.get(_id)
 
-    def add_networks(self, obj=None):
+    def add_network(self, obj=None):
         if _id is None:
             raise Exception('Invalid storage id')
         if obj is None or isinstance(obj, Host):
             raise Exception('Invalid storage class')
         self.networks[_id] = obj
 
-    def update_networks(self, obj=None):
+    def update_network(self, obj=None):
         if obj is None or isinstance(obj, Host):
             raise Exception('Invalid storage class')
         self.add_host(obj)
 
-    def remove_networks(self, _id=None):
+    def remove_network(self, _id=None):
         if _id is None:
             raise Exception('Invalid storage id')
         del self.networks[_id]
