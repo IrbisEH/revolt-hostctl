@@ -16,10 +16,10 @@ class Storage:
                 klass = self.CLASS_MAP[attr_key]
                 data = db.get(attr_key)
 
-                objs = [klass(**i) for i in data]
-                collector = {obj.id: obj for obj in objs}
-
-                setattr(self, attr_key, collector)
+                if isinstance(data, list):
+                    objs = [klass(**i) for i in data]
+                    collector = {obj.id: obj for obj in objs}
+                    setattr(self, attr_key, collector)
 
     def save_state(self):
         with self.adapter as db:

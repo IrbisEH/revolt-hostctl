@@ -7,7 +7,7 @@ class ShelveAdapter:
     def __init__(self):
         self.data = None
         self.storage_dir = Path(STORAGE_DIR)
-        self.storage.mkdir(parents=True, exist_ok=True)
+        self.storage_dir.mkdir(parents=True, exist_ok=True)
         self.db_file = self.storage_dir / "shelve_data.db"
 
     def __enter__(self):
