@@ -18,7 +18,7 @@ class Storage:
 
                 if isinstance(data, list):
                     objs = [klass(**i) for i in data]
-                    collector = {obj.id: obj for obj in objs}
+                    collector = {obj._id: obj for obj in objs}
                     setattr(self, attr_key, collector)
 
     def save_state(self):
@@ -37,14 +37,12 @@ class Storage:
         return self.hosts.get(_id)
 
     def add_host(self, obj=None):
-        if _id is None:
-            raise Exception('Invalid storage id')
-        if obj is None or isinstance(obj, Host):
+        if obj is None or not isinstance(obj, Host):
             raise Exception('Invalid storage class')
-        self.hosts[_id] = obj
+        self.hosts[obj._id] = obj
 
     def update_host(self, obj=None):
-        if obj is None or isinstance(obj, Host):
+        if obj is None or not isinstance(obj, Host):
             raise Exception('Invalid storage class')
         self.add_host(obj)
 
@@ -63,16 +61,16 @@ class Storage:
         return self.networks.get(_id)
 
     def add_network(self, obj=None):
-        if _id is None:
-            raise Exception('Invalid storage id')
-        if obj is None or isinstance(obj, Host):
+        print(obj)
+        print(type(obj))
+        if obj is None or not isinstance(obj, Network):
             raise Exception('Invalid storage class')
-        self.networks[_id] = obj
+        self.networks[obj._id] = obj
 
     def update_network(self, obj=None):
-        if obj is None or isinstance(obj, Host):
+        if obj is None or not isinstance(obj, Network):
             raise Exception('Invalid storage class')
-        self.add_host(obj)
+        self.add_network(obj)
 
     def remove_network(self, _id=None):
         if _id is None:
