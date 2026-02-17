@@ -11,10 +11,10 @@ class Storage:
             setattr(self, attr_key, dict())
 
     def load_state(self):
-        with self.adapter:
+        with self.adapter as db:
             for attr_key in self.COLLECTORS:
                 klass = self.CLASS_MAP[attr_key]
-                data = self.adapter.get(attr_key)
+                data = db.get(attr_key)
 
                 objs = [klass(**i) for i in data]
                 collector = {obj.id: obj for obj in objs}
@@ -22,10 +22,10 @@ class Storage:
                 setattr(self, attr_key, collector)
 
     def save_state(self):
-        with self.adapter:
+        with self.adapter as db:
             for attr_key in self.COLLECTORS:
                 data = [i.to_dict() for i in getattr(self, attr_key).values()]
-                self.adapter.set(attr_key, data)
+                db.set(attr_key, data)
 
     def list_hosts(self):
         for item in self.hosts.values():
