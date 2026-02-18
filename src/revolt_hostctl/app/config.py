@@ -1,3 +1,8 @@
 import os
+from pathlib import Path
 
-STORAGE_DIR = os.path.abspath("../storage")
+
+class Config:
+    def __init__(self, app_root: Path):
+        self.app_root = app_root
+        self.storage_dir = app_root / "storage"
