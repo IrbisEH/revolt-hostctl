@@ -1,12 +1,11 @@
 import shelve
 from pathlib import Path
-from src.revolt_hostctl.app.config import STORAGE_DIR
 
 
 class ShelveAdapter:
-    def __init__(self):
+    def __init__(self, storage_dir: Path):
         self.data = None
-        self.storage_dir = Path(STORAGE_DIR)
+        self.storage_dir = storage_dir
         self.storage_dir.mkdir(parents=True, exist_ok=True)
         self.db_file = self.storage_dir / "shelve_data.db"
 
