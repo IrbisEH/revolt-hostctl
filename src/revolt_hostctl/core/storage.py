@@ -1,4 +1,4 @@
-from src.revolt_hostctl.core.models import Network, Host
+from revolt_hostctl.core.models import Network, Host
 
 
 class Storage:
