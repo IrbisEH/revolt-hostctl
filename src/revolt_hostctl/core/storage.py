@@ -61,6 +61,6 @@ class Storage:
             raise ValueError(f"Invalid storage type: {_type}")
 
     def _valid_class(self, _type, obj):
-        klass = self.CLASS_MAP[_type]
-        if not isinstance(obj, klass):
+        klass = self.CLASS_MAP.get(_type)
+        if klass is None or not isinstance(obj, klass):
             raise ValueError(f"Invalid storage class: {obj}")
