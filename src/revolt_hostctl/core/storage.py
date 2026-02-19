@@ -31,7 +31,7 @@ class Storage:
     def list(self, _type):
         self._valid(_type)
         data = getattr(self, _type)
-        return data.values()
+        return list(data.values())
 
     def get(self, _type, _id):
         self._valid(_type)
