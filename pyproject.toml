@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "revolt-hostctl"
+version = "0.1.0"
+description = "Host and network management CLI (revolt_hostctl)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Evgeniy Khristenko", email = "hristenkoevgeniy@gmail.com" }
+]
+
+dependencies = []
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0"
+]
+
+[project.scripts]
+revolt-hostctl = "revolt_hostctl.app.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpath = ["test"]
+addopts = "-q"

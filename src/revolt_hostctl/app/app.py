@@ -9,3 +9,7 @@ class App:
         self.config = Config(root_dir)
         self.adapter = ShelveAdapter(self.config.storage_dir)
         self.storage = Storage(self.adapter)
+
+    def version(self):
+        return print(self.config.app_version)
+    
