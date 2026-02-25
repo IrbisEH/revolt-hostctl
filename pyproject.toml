@@ -7,7 +7,7 @@ name = "revolt-hostctl"
 version = "0.1.0"
 description = "Host and network management CLI (revolt_hostctl)"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.8"
 license = { file = "LICENCE" }
 authors = [
   { name = "Evgeniy Khristenko", email = "hristenkoevgeniy@gmail.com" }
