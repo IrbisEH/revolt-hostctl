@@ -10,6 +10,6 @@ class App:
         self.adapter = ShelveAdapter(self.config.storage_dir)
         self.storage = Storage(self.adapter)
 
-    def version(self):
-        return print(self.config.app_version)
+    def get_version(self):
+        return self.config.app_version
     

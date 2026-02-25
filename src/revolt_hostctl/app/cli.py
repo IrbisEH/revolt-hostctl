@@ -14,8 +14,9 @@ def main():
 
     if len(args):
         if args[0] == "version":
-            print(app.version)
+            print(app.get_version())
         else:
             print("Unknown command")
     else:
+        print("No arguments provided")
         sys.exit(0)
