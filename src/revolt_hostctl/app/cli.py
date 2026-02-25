@@ -13,7 +13,7 @@ def main():
     args = sys.argv[1:]
 
     if len(args):
-        if args[0] == "version":
+        if args[0] == "--version":
             print(app.get_version())
         else:
             print("Unknown command")
