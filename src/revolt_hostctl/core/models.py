@@ -20,7 +20,8 @@ class Network:
         return {
             "id": self.id,
             "name": self.name,
-            "cidr": self.cidr
+            "cidr": self.cidr,
+            "storage_key": self.storage_key
         }
 
 
@@ -54,7 +55,8 @@ class Host:
             "os_version": self.os_version,
             "description": self.description,
             "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "updated_at": self.updated_at,
+            "storage_key": self.storage_key
         }
 
     def __str__(self):
