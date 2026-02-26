@@ -34,11 +34,13 @@ class Storage:
         data[obj.id] = obj
 
     def get(self, obj_type: str, obj_id: str):
+        obj_type = obj_type.lower()
         self.valid_type(obj_type)
         data = getattr(self, obj_type)
         return data.get(obj_id)
 
     def list(self, obj_type: str):
+        obj_type = obj_type.lower()
         self.valid_type(obj_type)
         data = getattr(self, obj_type)
         return list(data.values())
