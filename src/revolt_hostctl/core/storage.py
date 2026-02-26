@@ -3,28 +3,28 @@ from revolt_hostctl.core.models import Network, Host
 
 class Storage:
     CLASS_MAP = {'network': Network,'host': Host}
-    COLLECTORS = tuple(CLASS_MAP.keys())
+    COLLECTIONS = tuple(CLASS_MAP.keys())
 
     def __init__(self, adapter):
         self.adapter = adapter
 
-        for attr_key in self.COLLECTORS:
+        for attr_key in self.COLLECTIONS:
             setattr(self, attr_key, dict())
 
     def load_state(self) -> None:
         with self.adapter as db:
-            for attr_key in self.COLLECTORS:
+            for attr_key in self.COLLECTIONS:
                 klass = self.CLASS_MAP[attr_key]
                 data = db.get(attr_key)
 
                 if isinstance(data, list):
                     objs = [klass(**i) for i in data]
-                    collector = {obj.id: obj for obj in objs}
-                    setattr(self, attr_key, collector)
+                    collection = {obj.id: obj for obj in objs}
+                    setattr(self, attr_key, collection)
 
     def save_state(self) -> None:
         with self.adapter as db:
-            for attr_key in self.COLLECTORS:
+            for attr_key in self.COLLECTIONS:
                 data = [i.to_dict() for i in getattr(self, attr_key).values()]
                 db.set(attr_key, data)
 
@@ -62,5 +62,5 @@ class Storage:
             raise ValueError(f"Invalid storage type: {type(obj)}")
 
     def valid_type(self, obj_type):
-        if obj_type not in self.COLLECTORS:
+        if obj_type not in self.COLLECTIONS:
             raise ValueError(f"Invalid storage type: {obj_type}")
