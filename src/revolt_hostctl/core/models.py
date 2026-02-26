@@ -13,12 +13,15 @@ class Network:
     id: str = field(default_factory=lambda: uuid.uuid4().hex)
     name: Optional[str] = None
     cidr: Optional[str] = None
+    storage_key = "network"
+
 
     def to_dict(self) -> dict:
         return {
-            "id": self._d,
+            "id": self.id,
             "name": self.name,
-            "cidr": self.cidr
+            "cidr": self.cidr,
+            "storage_key": self.storage_key
         }
 
 
@@ -40,6 +43,8 @@ class Host:
     created_at: datetime = field(default_factory=_utcnow)
     updated_at: datetime = field(default_factory=_utcnow)
 
+    storage_key = "host"
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
@@ -50,7 +55,8 @@ class Host:
             "os_version": self.os_version,
             "description": self.description,
             "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "updated_at": self.updated_at,
+            "storage_key": self.storage_key
         }
 
     def __str__(self):
@@ -66,4 +72,5 @@ class Host:
                 f"description={self.description}"
                 f"created_at={self.created_at} "
                 f"updated_at={self.updated_at}"
+                f"storage_key={self.storage_key}"
                 f")")
