@@ -1,3 +1,4 @@
+from tests.utils import network_objects_generator, host_object_generator
 from revolt_hostctl.core.storage import Storage
 from revolt_hostctl.core.models import Host, Network
 
@@ -23,18 +24,6 @@ class InMemoryAdapter:
         assert self._opened
         self._data[key] = value
 
-
-def network_objects_generator(count):
-    for i in range(count):
-        name = f"{Network.__name__}{i}"
-        cidr = f"10.0.0.0/{i}"
-        yield Network(name=name, cidr=cidr)
-
-def host_object_generator(count):
-    for i in range(count):
-        name = f"{Host.__name__}{i}"
-        mac_address = f"00:00:00:00:00:h{i}"
-        yield Host(name=name, mac_address=mac_address)
 
 def test_storage_unit_add_get_remove_methods():
     adapter = InMemoryAdapter()
@@ -96,7 +85,7 @@ def test_storage_unit_save_load_list_methods():
     storage.load_state()
 
     for obj_type in obj_types:
-        obj_type_name = obj_type.__name__.lower()
+        obj_type_name = obj_type.__name__
         obj_list = storage.list(obj_type_name)
 
         assert len(obj_list) == 10
