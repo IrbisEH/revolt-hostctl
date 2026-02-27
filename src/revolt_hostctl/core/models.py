@@ -11,8 +11,8 @@ def _utcnow() -> datetime:
 @dataclass
 class Network:
     id: str = field(default_factory=lambda: uuid.uuid4().hex)
-    name: str = ""
-    cidr: str = ""
+    name: str | None = None
+    cidr: str | None = None
     storage_key = "network"
 
 
@@ -28,16 +28,16 @@ class Network:
 class Host:
     # required
     id: str = field(default_factory=lambda: uuid.uuid4().hex)
-    name: str = ""
-    mac_address: str = ""
+    name: str | None = None
+    mac_address: str | None = None
 
     # optional
     ip_addresses: List[str] = field(default=list)
 
     # metadata
-    os: Optional[str] = None
-    os_version: Optional[str] = None
-    description: Optional[str] = None
+    os: str | None = None
+    os_version: str | None = None
+    description: str | None = None
 
     created_at: datetime = field(default_factory=_utcnow)
     updated_at: datetime = field(default_factory=_utcnow)
