@@ -11,8 +11,8 @@ def _utcnow() -> datetime:
 @dataclass
 class Network:
     id: str = field(default_factory=lambda: uuid.uuid4().hex)
-    name: Optional[str] = None
-    cidr: Optional[str] = None
+    name: str = ""
+    cidr: str = ""
     storage_key = "network"
 
 

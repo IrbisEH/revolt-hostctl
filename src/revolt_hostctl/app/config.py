@@ -11,4 +11,3 @@ class Config:
         self.log_max_bytes = 1024 * 1024 * 5
         self.log_backup_count = 5
         self.log_console = True
-        
