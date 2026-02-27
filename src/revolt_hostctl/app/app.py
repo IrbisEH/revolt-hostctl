@@ -50,7 +50,7 @@ class App:
         obj = klass(**params)
         stored_obj = self.storage.get(obj_type, obj.id)
         if stored_obj is not None:
-            raise Exception(f"Object {obj} already exists")
+            raise ValueError(f"Object {obj} already exists")
         self.storage.add(obj)
 
     @with_logging
@@ -62,7 +62,7 @@ class App:
         obj = klass(**params)
         stored_obj = self.storage.get(obj_type, obj.id)
         if stored_obj is None:
-            raise Exception(f"Object {obj} does not exist")
+            raise ValueError(f"Object {obj} does not exist")
         for field in fields(obj):
             attr = getattr(obj, field.name)
             if attr is None:
@@ -94,20 +94,27 @@ class App:
         except PackageNotFoundError:
             print("0.0.0+dev")
 
-    def _parse_obj_type(self, args: list, no_raise: bool = False) -> tuple:
-        obj_type = args.pop(0) if len(args) else None
-        if not no_raise and obj_type is None:
-            raise Exception("No obj type provided")
-        if obj_type not in self.storage.COLLECTIONS:
-            raise Exception(f"Invalid obj type: {obj_type}")
-        return obj_type, args
+    def _parse_obj_type(self, args: list, pass_none: bool = False) -> tuple:
+        resp_args = args[:]
+        obj_type = resp_args.pop(0) if len(resp_args) else None
 
-    def _parse_params(self, args: list) -> dict:
+        if not pass_none and obj_type is None:
+            raise ValueError("No obj type provided")
+
+        if obj_type is not None and obj_type not in self.storage.COLLECTIONS:
+            raise ValueError(f"Invalid obj type: {obj_type}")
+
+        return obj_type, resp_args
+
+    def _parse_params(self, args: list, silence: bool = False) -> dict:
         params = dict()
         for i in args:
             i = i.strip()
             if "=" not in i:
-                raise Exception(f"Invalid param: {i}")
+                if silence:
+                    continue
+                else:
+                    raise ValueError(f"Invalid param: {i}")
             else:
                 key, value = i.split("=")
                 params[key] = value
