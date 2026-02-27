@@ -1,5 +1,6 @@
 from pathlib import Path
 from functools import wraps
+from dataclasses import fields
 from importlib.metadata import version, PackageNotFoundError
 from revolt_hostctl.app.config import Config
 from revolt_hostctl.app.logger import Logger
@@ -47,8 +48,8 @@ class App:
         params = self._parse_params(args)
         klass = self.storage.CLASS_MAP[obj_type]
         obj = klass(**params)
-        resp_obj = self.storage.get(obj_type, obj.id)
-        if resp_obj is not None:
+        stored_obj = self.storage.get(obj_type, obj.id)
+        if stored_obj is not None:
             raise Exception(f"Object {obj} already exists")
         self.storage.add(obj)
 
@@ -59,8 +60,15 @@ class App:
         params = self._parse_params(args)
         klass = self.storage.CLASS_MAP[obj_type]
         obj = klass(**params)
-        resp_obj = self.storage.get(obj_type, obj.id)
-        # self.storage.update(obj)
+        stored_obj = self.storage.get(obj_type, obj.id)
+        if stored_obj is None:
+            raise Exception(f"Object {obj} does not exist")
+        for field in fields(obj):
+            attr = getattr(obj, field.name)
+            if attr is None:
+                continue
+            setattr(stored_obj, field.name, attr)
+        self.storage.update(stored_obj)
 
     @with_logging
     @with_storage_transaction
@@ -69,7 +77,7 @@ class App:
         params = self._parse_params(args)
         klass = self.storage.CLASS_MAP[obj_type]
         obj = klass(**params)
-        self.storage.update(obj)
+        self.storage.remove(obj)
 
     def list_objs(self, args):
         obj_type, _ = self._parse_obj_type(args)
