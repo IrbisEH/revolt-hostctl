@@ -3,13 +3,11 @@ from pathlib import Path
 from revolt_hostctl.app.app import App
 
 
-def build_app() -> App:
-    app_root = Path(__file__).resolve().parents[2]
-    return App(app_root)
+APP_ROOT = Path(__file__).resolve().parents[2]
 
 
 def main():
-    app = build_app()
+    app = App(APP_ROOT)
     args = sys.argv[1:]
 
     if len(args):

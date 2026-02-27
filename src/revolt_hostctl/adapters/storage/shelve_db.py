@@ -11,7 +11,7 @@ class ShelveAdapter:
 
     def __enter__(self):
         if self.data is None:
-            self.data = shelve.open(self.db_file, flag="c")
+            self.data = shelve.open(str(self.db_file), flag="c")
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):

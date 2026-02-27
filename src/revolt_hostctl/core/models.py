@@ -10,13 +10,15 @@ def _utcnow() -> datetime:
 
 @dataclass
 class Network:
-    _id: str = field(default_factory=lambda: uuid.uuid4().hex)
-    name: Optional[str] = None
-    cidr: Optional[str] = None
+    id: str = field(default_factory=lambda: uuid.uuid4().hex)
+    name: str = ""
+    cidr: str = ""
+    storage_key = "network"
+
 
     def to_dict(self) -> dict:
         return {
-            "_id": self._id,
+            "id": self.id,
             "name": self.name,
             "cidr": self.cidr
         }
@@ -25,7 +27,7 @@ class Network:
 @dataclass
 class Host:
     # required
-    _id: str = field(default_factory=lambda: uuid.uuid4().hex)
+    id: str = field(default_factory=lambda: uuid.uuid4().hex)
     name: str = ""
     mac_address: str = ""
 
@@ -40,9 +42,11 @@ class Host:
     created_at: datetime = field(default_factory=_utcnow)
     updated_at: datetime = field(default_factory=_utcnow)
 
+    storage_key = "host"
+
     def to_dict(self) -> dict:
         return {
-            "_id": self._id,
+            "id": self.id,
             "name": self.name,
             "mac_address": self.mac_address,
             "ip_addresses": self.ip_addresses,
