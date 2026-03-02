@@ -51,7 +51,12 @@ class App:
         stored_obj = self.storage.get(obj_type, obj.id)
         if stored_obj is not None:
             raise ValueError(f"Object {obj} already exists")
-        self.storage.add(obj)
+        return self.storage.add(obj)
+
+    @with_logging
+    @with_storage_transaction
+    def get_obj(self, obj_type, obj_id):
+        return self.storage.get(obj_type, obj_id)
 
     @with_logging
     @with_storage_transaction

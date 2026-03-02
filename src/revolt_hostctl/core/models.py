@@ -23,6 +23,15 @@ class Network:
             "cidr": self.cidr
         }
 
+    def __str__(self):
+        return f"revolt {self.name} network"
+
+    def __repr__(self):
+        return (f"Network("
+                f"_id={self.id} "
+                f"name={self.name} "
+                f"cidr={self.cidr} ")
+
 
 @dataclass
 class Host:
