@@ -22,6 +22,9 @@ def main():
         elif cmd == "--add":
             app.add_obj(args)
 
+        elif cmd == "--get":
+            app.get_obj(args)
+
         elif cmd == "--update":
             app.update_obj(args)
 
@@ -33,6 +36,9 @@ def main():
 
         elif cmd == "--version":
             app.version()
+
+        else:
+            raise Exception(f"Unknown command: {cmd}")
 
     except Exception as e:
         print(f"Error: {e}")

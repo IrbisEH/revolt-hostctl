@@ -64,7 +64,12 @@ def test_parse_params(tmp_path):
     assert res["param1"] == "1"
     assert res["param2"] == "2"
 
-    res = app._parse_params([])
+    params = []
+    res, err = try_func(app._parse_params, params)
+    assert res is None
+    assert isinstance(err, ValueError)
+
+    res = app._parse_params([], True)
     assert isinstance(res, dict)
     assert len(res.keys()) == 0
 
@@ -93,7 +98,8 @@ def test_crud_obj(tmp_path):
         for k, v in items[t].items():
             assert v == getattr(add_obj, k)
 
-        get_obj = app.get_obj(add_obj.storage_key, add_obj.id)
+        args = [t, f"id={add_obj.id}"]
+        get_obj = app.get_obj(args)
 
         assert type(add_obj) is type(get_obj)
         assert add_obj.id == get_obj.id
@@ -104,7 +110,9 @@ def test_crud_obj(tmp_path):
         add_obj.name = add_obj.name + "_modified"
         args = [t, f"id={add_obj.id}", f"name={add_obj.name}"]
         app.update_obj(args)
-        get_obj = app.get_obj(add_obj.storage_key, add_obj.id)
+
+        args = [t, f"id={add_obj.id}"]
+        get_obj = app.get_obj(args)
 
         assert type(add_obj) is type(get_obj)
         assert add_obj.id == get_obj.id
@@ -117,6 +125,7 @@ def test_crud_obj(tmp_path):
         args = [t, f"id={add_obj.id}"]
         app.remove_obj(args)
 
-        get_obj = app.get_obj(add_obj.storage_key, add_obj.id)
+        args = [t, f"id={add_obj.id}"]
+        get_obj = app.get_obj(args)
 
         assert get_obj is None
