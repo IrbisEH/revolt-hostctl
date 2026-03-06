@@ -69,6 +69,8 @@ class App:
         if stored_obj is None:
             raise ValueError(f"Object {obj} does not exist")
         for field in fields(obj):
+            if field.name == "created_at":
+                continue
             attr = getattr(obj, field.name)
             if attr is None:
                 continue
