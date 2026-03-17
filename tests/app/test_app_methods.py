@@ -76,9 +76,9 @@ def test_add_update_get_list_remove_methods(tmp_path, arg_params):
 
     for args in arg_params.values():
         obj = app.add_obj(args)
+        app.storage.load_state()
+        stored_obj = app.storage.get(obj.storage_key, obj.id)
 
-        args = [obj.storage_key, f"id={obj.id}"]
-        stored_obj = app.get_obj(args)
         assert_objs_equal(obj, stored_obj)
 
         stored_obj.name = stored_obj.name + "_updated"
@@ -90,7 +90,9 @@ def test_add_update_get_list_remove_methods(tmp_path, arg_params):
             args.append(f"{k}={v}")
 
         time.sleep(1)
-        updated_obj = app.update_obj(args)
+        app.update_obj(args)
+        app.storage.load_state()
+        updated_obj = app.storage.get(stored_obj.storage_key, stored_obj.id)
 
         assert updated_obj.name == obj.name + "_updated"
         assert_objs_equal(updated_obj, stored_obj, ["name", "updated_at"])
@@ -98,6 +100,7 @@ def test_add_update_get_list_remove_methods(tmp_path, arg_params):
 
         args = [updated_obj.storage_key, f"id={updated_obj.id}"]
         app.remove_obj(args)
-        resp = app.get_obj(args)
+        app.storage.load_state()
+        resp = app.storage.get(updated_obj.storage_key, updated_obj.id)
 
         assert resp is None

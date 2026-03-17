@@ -1,7 +1,8 @@
 import uuid
 import time
+from pprint import pformat
+from typing import Optional
 from datetime import datetime, timezone
-from typing import Set
 from dataclasses import dataclass, field
 
 
@@ -13,42 +14,55 @@ def _ts_now() -> int:
     return int(time.time())
 
 @dataclass
-class Network:
+class BaseModel:
     id: str = field(default_factory=lambda: uuid.uuid4().hex)
-    name: str | None = None
-    cidr: str | None = None
+    created_at: int = field(default_factory=_ts_now)
+    updated_at: int = field(default_factory=_ts_now)
 
-    created_at: datetime = field(default_factory=_ts_now)
-    updated_at: datetime = field(default_factory=_ts_now)
-
-    storage_key = "network"
-
+    @property
+    def storage_key(self) -> str:
+        return self.__class__.__name__.lower()
 
     def to_dict(self) -> dict:
-        return {
-            "id": self.id,
-            "name": self.name,
-            "cidr": self.cidr,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
-        }
+        return self.__dict__.copy()
 
-    def __str__(self):
-        return f"revolt {self.name} network"
+    def get_table_row(self, fields: Optional[list] = None) -> list:
+        fields = fields or []
+        date_fields = ["created_at", "updated_at"]
 
-    def __repr__(self):
-        return (f"Network("
-                f"_id={self.id} "
-                f"name={self.name} "
-                f"cidr={self.cidr} "
-                f"created_at={self.created_at} "
-                f"updated_at={self.updated_at}")
+        def _format(_val):
+            if isinstance(_val, int):
+                date = datetime.fromtimestamp(_val)
+                return date.strftime("%Y-%m-%d %H:%M:%S")
+            else:
+                return ""
+
+        res = []
+        for f in fields:
+            val = getattr(self, f, "Unknown")
+            if f in date_fields and isinstance(val, int):
+                val = _format(val)
+
+            res.append(val)
+
+        return res
+
+    def __repr__(self) -> str:
+        props = [f"{k}={v!r}" for k, v in self.__dict__.items()]
+        return f"{self.__class__.__name__}({' '.join(props)})"
+
+    def __str__(self) -> str:
+        return pformat(self.to_dict())
 
 
 @dataclass
-class Host:
-    # required
-    id: str = field(default_factory=lambda: uuid.uuid4().hex)
+class Network(BaseModel):
+    name: str | None = None
+    cidr: str | None = None
+
+
+@dataclass
+class Host(BaseModel):
     name: str | None = None
     mac_address: str | None = None
     ip_addresses: set | None = None
@@ -57,36 +71,3 @@ class Host:
     os: str | None = None
     os_version: str | None = None
     description: str | None = None
-
-    created_at: datetime = field(default_factory=_ts_now)
-    updated_at: datetime = field(default_factory=_ts_now)
-
-    storage_key = "host"
-
-    def to_dict(self) -> dict:
-        return {
-            "id": self.id,
-            "name": self.name,
-            "mac_address": self.mac_address,
-            "ip_addresses": self.ip_addresses,
-            "os": self.os,
-            "os_version": self.os_version,
-            "description": self.description,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
-        }
-
-    def __str__(self):
-        return f"revolt {self.name} host"
-
-    def __repr__(self):
-        return (f"Host("
-                f"_id={self._id} "
-                f"name={self.name} "
-                f"mac_address={self.mac_address} "
-                f"os={self.os} "
-                f"os_version={self.os_version} "
-                f"description={self.description}"
-                f"created_at={self.created_at} "
-                f"updated_at={self.updated_at}"
-                f")")

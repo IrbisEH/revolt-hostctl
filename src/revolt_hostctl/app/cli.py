@@ -19,19 +19,19 @@ def main():
         if cmd in ["-h", "--help"]:
             app.help()
 
-        elif cmd == "--add":
+        elif cmd == "-add":
             app.add_obj(args)
 
-        elif cmd == "--get":
+        elif cmd == "-get":
             app.get_obj(args)
 
-        elif cmd == "--update":
+        elif cmd == "-update":
             app.update_obj(args)
 
-        elif cmd == "--remove":
+        elif cmd == "-remove":
             app.remove_obj(args)
 
-        elif cmd == "--list":
+        elif cmd == "-list":
             app.list_objs(args)
 
         elif cmd == "--version":
