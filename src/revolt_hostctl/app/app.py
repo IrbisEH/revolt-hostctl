@@ -73,7 +73,7 @@ class App:
             if attr is None:
                 continue
             setattr(stored_obj, field.name, attr)
-        self.storage.update(stored_obj)
+        return self.storage.update(stored_obj)
 
     @with_logging
     @with_storage_transaction

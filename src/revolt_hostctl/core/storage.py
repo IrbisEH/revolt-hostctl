@@ -1,3 +1,4 @@
+import time
 from revolt_hostctl.core.models import Network, Host
 
 
@@ -47,7 +48,8 @@ class Storage:
         return list(data.values())
 
     def update(self, obj):
-        self.add(obj)
+        obj.updated_at = int(time.time())
+        return self.add(obj)
 
     def remove(self, obj):
         self.valid_obj(obj)

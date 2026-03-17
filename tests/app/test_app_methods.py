@@ -3,7 +3,7 @@ import pytest
 from tests.utils import try_func
 from revolt_hostctl.app.app import App
 from revolt_hostctl.core.models import Network, Host
-from tests.utils import network_objects_generator, host_object_generator
+from tests.utils import network_objects_generator, host_object_generator, assert_objs_equal
 
 
 @pytest.fixture
@@ -76,40 +76,35 @@ def test_parse_params(tmp_path):
     assert isinstance(res, dict)
     assert len(res.keys()) == 0
 
+def test_add_update_get_list_remove_methods(tmp_path, arg_params):
+    exclude_attrs = ["created_at", "updated_at"]
+    app = App(tmp_path)
 
-# def test_add_obj(tmp_path, arg_params):
-#     # TODO: fix it! It mast testsing all params include ip_addresses lists
-#     app = App(tmp_path)
-#
-#     for _type, args in arg_params.items():
-#         obj = app.add_obj(args)
-#
-#         resp = app.get_obj(obj.storage_key, obj.id)
-#
-#         obj_type_name = obj.__class__.__name__
-#         resp_type_name = resp.__class__.__name__
-#
-#         assert resp is not None
-#         assert resp_type_name == obj_type_name
-#
-#         for prop_name in obj.__dict__.keys():
-#             obj_attr = getattr(obj, prop_name)
-#             resp_attr = getattr(resp, prop_name)
-#             assert obj_attr == resp_attr
-#
-#         params = resp.to_dict()
-#         params["name"] = params["name"] + "_modified"
-#         args = [f"{k}={v}" for k, v in params.items() if isinstance(v, str)]
-#         args = [_type] + args
-#
-#         app.update_obj(args)
-#         resp = app.get_obj(obj.storage_key, obj.id)
-#         resp_type_name = resp.__class__.__name__
-#
-#         assert resp is not None
-#         assert resp_type_name == obj_type_name
-#
-#         for prop_name in resp.__dict__.keys():
-#             modified_attr = params.get(prop_name)
-#             resp_attr = getattr(resp, prop_name)
-#             assert modified_attr == resp_attr
+    for args in arg_params.values():
+        obj = app.add_obj(args)
+        stored_obj = app.get_obj(obj.storage_key, obj.id)
+
+        assert_objs_equal(obj, stored_obj, exclude_attrs)
+
+        stored_obj.name = stored_obj.name + "_updated"
+
+        args = [stored_obj.storage_key]
+        for k, v in stored_obj.to_dict().items():
+            if v is None:
+                continue
+            args.append(f"{k}={v}")
+
+        updated_obj = app.update_obj(args)
+
+        assert updated_obj.name == obj.name + "_updated"
+        assert_objs_equal(updated_obj, stored_obj, exclude_attrs + ["name"])
+
+        resp = app.list_objs([stored_obj.storage_key])
+
+
+
+        args = [updated_obj.storage_key, f"id={updated_obj.id}"]
+        app.remove_obj(args)
+        resp = app.get_obj(updated_obj.storage_key, updated_obj.id)
+
+        assert resp is None

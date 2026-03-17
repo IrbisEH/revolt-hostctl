@@ -1,6 +1,7 @@
 import uuid
+import time
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import Set
 from dataclasses import dataclass, field
 
 
@@ -8,11 +9,18 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _ts_now() -> int:
+    return int(time.time())
+
 @dataclass
 class Network:
     id: str = field(default_factory=lambda: uuid.uuid4().hex)
     name: str | None = None
     cidr: str | None = None
+
+    created_at: datetime = field(default_factory=_ts_now)
+    updated_at: datetime = field(default_factory=_ts_now)
+
     storage_key = "network"
 
 
@@ -39,17 +47,15 @@ class Host:
     id: str = field(default_factory=lambda: uuid.uuid4().hex)
     name: str | None = None
     mac_address: str | None = None
-
-    # optional
-    ip_addresses: List[str] = field(default=list)
+    ip_addresses: set | None = None
 
     # metadata
     os: str | None = None
     os_version: str | None = None
     description: str | None = None
 
-    created_at: datetime = field(default_factory=_utcnow)
-    updated_at: datetime = field(default_factory=_utcnow)
+    created_at: datetime = field(default_factory=_ts_now)
+    updated_at: datetime = field(default_factory=_ts_now)
 
     storage_key = "host"
 
@@ -61,9 +67,7 @@ class Host:
             "ip_addresses": self.ip_addresses,
             "os": self.os,
             "os_version": self.os_version,
-            "description": self.description,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "description": self.description
         }
 
     def __str__(self):
