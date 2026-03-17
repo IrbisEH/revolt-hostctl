@@ -71,11 +71,12 @@ def test_parse_params(tmp_path):
     assert isinstance(res, dict)
     assert len(res.keys()) == 0
 
+
 def test_add_update_get_list_remove_methods(tmp_path, arg_params):
     app = App(tmp_path)
 
     for args in arg_params.values():
-        obj = app.add_obj(args)
+        obj = app.add_cmd(args)
         app.storage.load_state()
         stored_obj = app.storage.get(obj.storage_key, obj.id)
 
@@ -90,7 +91,7 @@ def test_add_update_get_list_remove_methods(tmp_path, arg_params):
             args.append(f"{k}={v}")
 
         time.sleep(1)
-        app.update_obj(args)
+        app.update_cmd(args)
         app.storage.load_state()
         updated_obj = app.storage.get(stored_obj.storage_key, stored_obj.id)
 
@@ -99,8 +100,27 @@ def test_add_update_get_list_remove_methods(tmp_path, arg_params):
         assert updated_obj.updated_at > stored_obj.updated_at
 
         args = [updated_obj.storage_key, f"id={updated_obj.id}"]
-        app.remove_obj(args)
+        app.remove_cmd(args)
         app.storage.load_state()
         resp = app.storage.get(updated_obj.storage_key, updated_obj.id)
 
         assert resp is None
+
+
+def test_clean_all_method(tmp_path, arg_params):
+    app = App(tmp_path)
+
+    for args in arg_params.values():
+        app.add_cmd(args)
+
+    app.storage.load_state()
+
+    for key in arg_params.keys():
+        assert len(getattr(app.storage, key)) == 1
+
+    app.clean_cmd()
+
+    app.storage.load_state()
+
+    for key in arg_params.keys():
+        assert len(getattr(app.storage, key)) == 0

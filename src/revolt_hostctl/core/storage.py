@@ -56,6 +56,10 @@ class Storage:
         data = getattr(self, obj.storage_key)
         return data.pop(obj.id, None)
 
+    def clean_all(self):
+        for attr_key in self.COLLECTIONS:
+            setattr(self, attr_key, dict())
+
     @staticmethod
     def valid_obj(obj):
         check = [

@@ -44,7 +44,7 @@ class App:
 
     @with_logging
     @with_storage_transaction
-    def add_obj(self, args):
+    def add_cmd(self, args):
         obj_type, args = self._parse_obj_type(args)
         params = self._parse_params(args)
         klass = self.storage.CLASS_MAP[obj_type]
@@ -56,7 +56,7 @@ class App:
 
     @with_logging
     @with_storage_transaction
-    def get_obj(self, args):
+    def get_cmd(self, args):
         obj_type, args = self._parse_obj_type(args)
         params = self._parse_params(args)
         klass = self.storage.CLASS_MAP[obj_type]
@@ -66,7 +66,7 @@ class App:
 
     @with_logging
     @with_storage_transaction
-    def update_obj(self, args):
+    def update_cmd(self, args):
         obj_type, args = self._parse_obj_type(args)
         params = self._parse_params(args)
         klass = self.storage.CLASS_MAP[obj_type]
@@ -85,35 +85,30 @@ class App:
 
     @with_logging
     @with_storage_transaction
-    def remove_obj(self, args):
+    def remove_cmd(self, args):
         obj_type, args = self._parse_obj_type(args)
         params = self._parse_params(args)
         klass = self.storage.CLASS_MAP[obj_type]
         obj = klass(**params)
         self.storage.remove(obj)
 
+    @with_logging
     @with_storage_transaction
-    def list_objs(self, args):
+    def list_cmd(self, args):
         obj_type, _ = self._parse_obj_type(args)
         obj_list = self.storage.list(obj_type)
+        headers = ["id", "name"]
+        rows = [i.get_table_row(headers) for i in obj_list]
+        print_table(rows, headers)
 
-        print_table(obj_list)
+    @with_logging
+    @with_storage_transaction
+    def clean_cmd(self):
+        self.storage.clean_all()
 
-    def help(self):
-        print(
-            "Usage: revolt-hostctl <command> [options]\n"
-            "\n"
-            "Commands:\n"
-            "  -add <obj_type> <params>      Add a new <obj_type> object\n"
-            "  -get <obj_type> <params>      Get an <obj_type> object by ID\n"
-            "  -update <obj_type> <params>   Update an existing <obj_type> object\n"
-            "  -remove <obj_type> <id=>      Remove an <obj_type> object by ID\n"
-            "  -list <obj_type>              List all <obj_type> objects\n"
-            "  -help, -h                     Show this help message\n"
-            "  -version                      Show version information\n"
-        )
-
-    def version(self):
+    @with_logging
+    @with_storage_transaction
+    def version_cmd(self):
         try:
             print(version(self.config.app_name))
         except PackageNotFoundError:
