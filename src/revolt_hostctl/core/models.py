@@ -28,7 +28,9 @@ class Network:
         return {
             "id": self.id,
             "name": self.name,
-            "cidr": self.cidr
+            "cidr": self.cidr,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at
         }
 
     def __str__(self):
@@ -38,7 +40,9 @@ class Network:
         return (f"Network("
                 f"_id={self.id} "
                 f"name={self.name} "
-                f"cidr={self.cidr} ")
+                f"cidr={self.cidr} "
+                f"created_at={self.created_at} "
+                f"updated_at={self.updated_at}")
 
 
 @dataclass
@@ -67,7 +71,9 @@ class Host:
             "ip_addresses": self.ip_addresses,
             "os": self.os,
             "os_version": self.os_version,
-            "description": self.description
+            "description": self.description,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at
         }
 
     def __str__(self):

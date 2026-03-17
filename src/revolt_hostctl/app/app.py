@@ -55,8 +55,12 @@ class App:
 
     @with_logging
     @with_storage_transaction
-    def get_obj(self, obj_type, obj_id):
-        return self.storage.get(obj_type, obj_id)
+    def get_obj(self, args):
+        obj_type, args = self._parse_obj_type(args)
+        params = self._parse_params(args)
+        klass = self.storage.CLASS_MAP[obj_type]
+        obj = klass(**params)
+        return self.storage.get(obj.storage_key, obj.id)
 
     @with_logging
     @with_storage_transaction
@@ -69,6 +73,8 @@ class App:
         if stored_obj is None:
             raise ValueError(f"Object {obj} does not exist")
         for field in fields(obj):
+            if field.name == "created_at":
+                continue
             attr = getattr(obj, field.name)
             if attr is None:
                 continue
@@ -84,6 +90,7 @@ class App:
         obj = klass(**params)
         self.storage.remove(obj)
 
+    @with_storage_transaction
     def list_objs(self, args):
         obj_type, _ = self._parse_obj_type(args)
         obj_list = self.storage.list(obj_type)
@@ -91,7 +98,18 @@ class App:
             print(obj)
 
     def help(self):
-        pass
+        print(
+            "Usage: revolt-hostctl <command> [options]\n"
+            "\n"
+            "Commands:\n"
+            "  add <obj_type> <params>      Add a new <obj_type> object\n"
+            "  get <obj_type> <params>      Get an <obj_type> object by ID\n"
+            "  update <obj_type> <params>   Update an existing <obj_type> object\n"
+            "  remove <obj_type> <id=>      Remove an <obj_type> object by ID\n"
+            "  list <obj_type>              List all <obj_type> objects\n"
+            "  help                         Show this help message\n"
+            "  version                      Show version information\n"
+        )
 
     def version(self):
         try:
@@ -123,4 +141,8 @@ class App:
             else:
                 key, value = i.split("=")
                 params[key] = value
+
+        if not silence and not len(params.keys()):
+            raise ValueError("No any params provided")
+
         return params

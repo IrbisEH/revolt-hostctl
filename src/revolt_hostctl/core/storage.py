@@ -29,12 +29,6 @@ class Storage:
                 data = [i.to_dict() for i in getattr(self, attr_key).values()]
                 db.set(attr_key, data)
 
-    def add(self, obj: Network | Host) -> Network | Host:
-        self.valid_obj(obj)
-        data = getattr(self, obj.storage_key)
-        data[obj.id] = obj
-        return obj
-
     def get(self, obj_type: str, obj_id: str) -> Network | Host | None:
         obj_type = obj_type.lower()
         self.valid_type(obj_type)
@@ -46,6 +40,12 @@ class Storage:
         self.valid_type(obj_type)
         data = getattr(self, obj_type)
         return list(data.values())
+
+    def add(self, obj: Network | Host) -> Network | Host:
+        self.valid_obj(obj)
+        data = getattr(self, obj.storage_key)
+        data[obj.id] = obj
+        return obj
 
     def update(self, obj):
         obj.updated_at = int(time.time())

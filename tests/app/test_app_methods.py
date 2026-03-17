@@ -1,9 +1,9 @@
 import pytest
+import time
 
 from tests.utils import try_func
 from revolt_hostctl.app.app import App
-from revolt_hostctl.core.models import Network, Host
-from tests.utils import network_objects_generator, host_object_generator, assert_objs_equal
+from tests.utils import assert_objs_equal
 
 
 @pytest.fixture
@@ -72,19 +72,24 @@ def test_parse_params(tmp_path):
     assert res["param1"] == "1"
     assert res["param2"] == "2"
 
-    res = app._parse_params([])
+    params = []
+    res, err = try_func(app._parse_params, params)
+    assert res is None
+    assert isinstance(err, ValueError)
+
+    res = app._parse_params([], True)
     assert isinstance(res, dict)
     assert len(res.keys()) == 0
 
 def test_add_update_get_list_remove_methods(tmp_path, arg_params):
-    exclude_attrs = ["created_at", "updated_at"]
     app = App(tmp_path)
 
     for args in arg_params.values():
         obj = app.add_obj(args)
-        stored_obj = app.get_obj(obj.storage_key, obj.id)
 
-        assert_objs_equal(obj, stored_obj, exclude_attrs)
+        args = [obj.storage_key, f"id={obj.id}"]
+        stored_obj = app.get_obj(args)
+        assert_objs_equal(obj, stored_obj)
 
         stored_obj.name = stored_obj.name + "_updated"
 
@@ -94,17 +99,15 @@ def test_add_update_get_list_remove_methods(tmp_path, arg_params):
                 continue
             args.append(f"{k}={v}")
 
+        time.sleep(1)
         updated_obj = app.update_obj(args)
 
         assert updated_obj.name == obj.name + "_updated"
-        assert_objs_equal(updated_obj, stored_obj, exclude_attrs + ["name"])
-
-        resp = app.list_objs([stored_obj.storage_key])
-
-
+        assert_objs_equal(updated_obj, stored_obj, ["name", "updated_at"])
+        assert updated_obj.updated_at > stored_obj.updated_at
 
         args = [updated_obj.storage_key, f"id={updated_obj.id}"]
         app.remove_obj(args)
-        resp = app.get_obj(updated_obj.storage_key, updated_obj.id)
+        resp = app.get_obj(args)
 
         assert resp is None
