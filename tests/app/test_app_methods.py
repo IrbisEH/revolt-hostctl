@@ -1,7 +1,6 @@
 import pytest
 import time
 
-from tests.utils import try_func
 from revolt_hostctl.app.app import App
 from tests.utils import assert_objs_equal
 
@@ -17,37 +16,28 @@ def arg_params():
 def test_parse_obj_type(tmp_path):
     app = App(tmp_path)
 
-    res, err = try_func(app._parse_obj_type, [])
-    assert res is None
-    assert isinstance(err, ValueError)
+    with pytest.raises(ValueError):
+        app._parse_obj_type([])
 
-    res, err = try_func(app._parse_obj_type, [], True)
-    assert isinstance(res, tuple)
+    res = app._parse_obj_type([], True)
     assert len(res) == 2
     assert res[0] is None
     assert isinstance(res[1], list) and len(res[1]) == 0
-    assert err is None
 
-    res, err = try_func(app._parse_obj_type, ["invalid"])
-    assert res is None
-    assert isinstance(err, ValueError)
+    with pytest.raises(ValueError):
+        app._parse_obj_type(["invalid"])
 
-    res, err = try_func(app._parse_obj_type, ["invalid", True])
-    assert res is None
-    assert isinstance(err, ValueError)
+    with pytest.raises(ValueError):
+        app._parse_obj_type(["invalid"], True)
 
     for t in app.storage.COLLECTIONS:
-        res, err = try_func(app._parse_obj_type, [t])
-        assert isinstance(res, tuple)
+        res = app._parse_obj_type([t])
         assert len(res) == 2
         assert res[0] == t
-        assert err is None
 
-        res, err = try_func(app._parse_obj_type, [t], True)
-        assert isinstance(res, tuple)
+        res = app._parse_obj_type([t], True)
         assert len(res) == 2
         assert res[0] == t
-        assert err is None
 
 
 def test_parse_params(tmp_path):
@@ -62,9 +52,9 @@ def test_parse_params(tmp_path):
     assert res["param3"] == "3"
 
     params = ["param1=1", "param2=2", "param3"]
-    res, err = try_func(app._parse_params, params)
-    assert res is None
-    assert isinstance(err, ValueError)
+
+    with pytest.raises(ValueError):
+        app._parse_params(params)
 
     res = app._parse_params(params, True)
     assert isinstance(res, dict)
@@ -73,9 +63,9 @@ def test_parse_params(tmp_path):
     assert res["param2"] == "2"
 
     params = []
-    res, err = try_func(app._parse_params, params)
-    assert res is None
-    assert isinstance(err, ValueError)
+
+    with pytest.raises(ValueError):
+        app._parse_params(params)
 
     res = app._parse_params([], True)
     assert isinstance(res, dict)

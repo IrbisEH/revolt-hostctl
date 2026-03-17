@@ -15,23 +15,6 @@ def host_object_generator(count):
         yield Host(name=name, mac_address=mac_address)
 
 
-def is_value_err(func, args):
-    value_err = False
-    try:
-        func(args)
-    except ValueError:
-        value_err = True
-    return value_err
-
-
-
-def try_func(func, *args, **kwargs):
-    try:
-        res = func(*args, **kwargs)
-    except Exception as e:
-        return None, e
-    return res, None
-
 def assert_objs_equal(left, right, exclude=None) -> None:
     exclude = exclude or []
     for attr_name in left.__dict__.keys():
