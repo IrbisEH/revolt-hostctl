@@ -1,9 +1,8 @@
 import uuid
 import time
-from pprint import pformat
 from typing import Optional
 from datetime import datetime, timezone
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 
 
 def _utcnow() -> datetime:
@@ -22,6 +21,18 @@ class BaseModel:
     @property
     def storage_key(self) -> str:
         return self.__class__.__name__.lower()
+
+    def _ordered_items(self):
+        data = {f.name: getattr(self, f.name) for f in fields(self)}
+
+        keys = list(data.keys())
+        keys.remove("id")
+        keys.remove("created_at")
+        keys.remove("updated_at")
+
+        ordered_keys = ["id"] + keys + ["created_at", "updated_at"]
+
+        return [(k, data[k]) for k in ordered_keys]
 
     def to_dict(self) -> dict:
         return self.__dict__.copy()
@@ -52,8 +63,15 @@ class BaseModel:
         return f"{self.__class__.__name__}({' '.join(props)})"
 
     def __str__(self) -> str:
-        return pformat(self.to_dict())
+        items = self._ordered_items()
+        max_key_len = max(len(k) for k, _ in items)
 
+        lines = []
+        for key, value in items:
+            value_str = "-" if value is None else str(value)
+            lines.append(f"{key.ljust(max_key_len)} {value_str}")
+
+        return "\n".join(lines)
 
 @dataclass
 class Network(BaseModel):

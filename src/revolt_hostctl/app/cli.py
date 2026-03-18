@@ -16,10 +16,7 @@ def main():
 
         cmd = args.pop(0)
 
-        if cmd in ["-h", "--help"]:
-            print_help()
-
-        elif cmd == "-add":
+        if cmd == "-add":
             app.add_cmd(args)
 
         elif cmd == "-get":
@@ -37,8 +34,11 @@ def main():
         elif cmd == "-clean":
             app.clean_cmd()
 
-        elif cmd == "--version":
+        elif cmd == "-version":
             app.version_cmd()
+
+        elif cmd in ["-h", "-help"]:
+            print_help()
 
         else:
             raise Exception(f"Unknown command: {cmd}")
@@ -59,6 +59,9 @@ def print_help():
         "  -remove <obj_type> <id=>      Remove an <obj_type> object by ID\n"
         "  -list <obj_type>              List all <obj_type> objects\n"
         "  -clean                        Delete all objects\n"
-        "  -help, -h                     Show this help message\n"
         "  -version                      Show version information\n"
+        "  -help, -h                     Show this help message\n"
+        "\n"
+        "_______\n"
+        "Object types: network, host"
     )

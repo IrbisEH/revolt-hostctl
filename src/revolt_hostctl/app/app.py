@@ -97,6 +97,11 @@ class App:
     def list_cmd(self, args):
         obj_type, _ = self._parse_obj_type(args)
         obj_list = self.storage.list(obj_type)
+
+        if not obj_list:
+            print("No objects found")
+            return
+
         headers = ["id", "name"]
         rows = [i.get_table_row(headers) for i in obj_list]
         print_table(rows, headers)
