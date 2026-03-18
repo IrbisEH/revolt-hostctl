@@ -1,5 +1,5 @@
 from tests.utils import network_objects_generator, host_object_generator
-from revolt_hostctl.core.storage import Storage
+from revolt_hostctl.app.storage import Storage
 from revolt_hostctl.adapters.storage.shelve_db import ShelveAdapter
 
 
@@ -42,3 +42,30 @@ def test_storage_save_load_roundtrip(tmp_path):
                 obj_attr = getattr(obj, prop_name)
                 resp_attr = getattr(resp, prop_name)
                 assert obj_attr == resp_attr
+
+def test_clean_all_storage(tmp_path):
+    adapter = ShelveAdapter(tmp_path)
+    storage = Storage(adapter)
+
+    objects = {
+        'network': [i for i in network_objects_generator(10)],
+        'host': [i for i in host_object_generator(10)],
+    }
+
+    for obj_list in objects.values():
+        for obj in obj_list:
+            storage.add(obj)
+
+    storage.save_state()
+    storage.load_state()
+
+    for key in objects.keys():
+        assert len(getattr(storage, key)) == 10
+
+    storage.clean_all()
+
+    storage.save_state()
+    storage.load_state()
+
+    for key in objects.keys():
+        assert len(getattr(storage, key)) == 0
