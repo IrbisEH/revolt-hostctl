@@ -13,7 +13,9 @@ authors = [
   { name = "Evgeniy Khristenko", email = "hristenkoevgeniy@gmail.com" }
 ]
 
-dependencies = []
+dependencies = [
+  "platformdirs>=4,<5",
+]
 
 [project.optional-dependencies]
 test = [

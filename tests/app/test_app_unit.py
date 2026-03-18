@@ -1,7 +1,7 @@
 import pytest
 import time
 
-from revolt_hostctl.app.app import App
+from revolt_hostctl.app import app as app_module
 from tests.utils import assert_objs_equal
 
 
@@ -13,8 +13,9 @@ def arg_params():
     }
 
 
-def test_parse_obj_type(tmp_path):
-    app = App(tmp_path)
+def test_parse_obj_type(fake_config, monkeypatch):
+    monkeypatch.setattr(app_module, "Config", lambda: fake_config)
+    app = app_module.App()
 
     with pytest.raises(ValueError):
         app._parse_obj_type([])
@@ -40,8 +41,9 @@ def test_parse_obj_type(tmp_path):
         assert res[0] == t
 
 
-def test_parse_params(tmp_path):
-    app = App(tmp_path)
+def test_parse_params(fake_config, monkeypatch):
+    monkeypatch.setattr(app_module, "Config", lambda: fake_config)
+    app = app_module.App()
 
     params = ["param1=1", "param2=2", "param3=3"]
     res = app._parse_params(params)
@@ -72,8 +74,9 @@ def test_parse_params(tmp_path):
     assert len(res.keys()) == 0
 
 
-def test_add_update_get_list_remove_methods(tmp_path, arg_params):
-    app = App(tmp_path)
+def test_add_update_get_list_remove_methods(fake_config, monkeypatch, arg_params):
+    monkeypatch.setattr(app_module, "Config", lambda: fake_config)
+    app = app_module.App()
 
     for args in arg_params.values():
         obj = app.add_cmd(args)
@@ -107,8 +110,9 @@ def test_add_update_get_list_remove_methods(tmp_path, arg_params):
         assert resp is None
 
 
-def test_clean_all_method(tmp_path, arg_params):
-    app = App(tmp_path)
+def test_clean_all_method(fake_config, monkeypatch, arg_params):
+    monkeypatch.setattr(app_module, "Config", lambda: fake_config)
+    app = app_module.App()
 
     for args in arg_params.values():
         app.add_cmd(args)

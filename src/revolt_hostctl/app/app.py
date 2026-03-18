@@ -1,4 +1,3 @@
-from pathlib import Path
 from functools import wraps
 from dataclasses import fields
 from importlib.metadata import version, PackageNotFoundError
@@ -10,8 +9,8 @@ from revolt_hostctl.adapters.storage.shelve_db import ShelveAdapter
 
 
 class App:
-    def __init__(self, root_dir: Path):
-        self.config = Config(root_dir)
+    def __init__(self):
+        self.config = Config()
         self.logger = Logger(self.config)
         self.adapter = ShelveAdapter(self.config.storage_dir)
         self.storage = Storage(self.adapter)

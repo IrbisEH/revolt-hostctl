@@ -1,13 +1,9 @@
 import sys
-from pathlib import Path
 from revolt_hostctl.app.app import App
 
 
-APP_ROOT = Path(__file__).resolve().parents[2]
-
-
 def main():
-    app = App(APP_ROOT)
+    app = App()
     args = sys.argv[1:]
 
     try:
