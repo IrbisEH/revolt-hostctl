@@ -1,4 +1,4 @@
-from revolt_hostctl.core.models import Host, Network
+from revolt_hostctl.app.models import Host, Network
 
 
 def network_objects_generator(count):

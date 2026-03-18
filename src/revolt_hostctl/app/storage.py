@@ -1,5 +1,5 @@
 import time
-from revolt_hostctl.core.models import Network, Host
+from revolt_hostctl.app.models import Network, Host
 
 
 class Storage:

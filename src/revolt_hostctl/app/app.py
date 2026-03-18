@@ -4,9 +4,9 @@ from dataclasses import fields
 from importlib.metadata import version, PackageNotFoundError
 from revolt_hostctl.app.config import Config
 from revolt_hostctl.app.logger import Logger
+from revolt_hostctl.app.storage import Storage
+from revolt_hostctl.app.utils import print_table
 from revolt_hostctl.adapters.storage.shelve_db import ShelveAdapter
-from revolt_hostctl.core.storage import Storage
-from revolt_hostctl.core.utils import print_table
 
 
 class App:
