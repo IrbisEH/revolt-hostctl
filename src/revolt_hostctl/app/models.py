@@ -12,6 +12,7 @@ def _utcnow() -> datetime:
 def _ts_now() -> int:
     return int(time.time())
 
+
 @dataclass
 class BaseModel:
     id: str = field(default_factory=lambda: uuid.uuid4().hex)
@@ -37,8 +38,8 @@ class BaseModel:
     def to_dict(self) -> dict:
         return self.__dict__.copy()
 
-    def get_table_row(self, fields: Optional[list] = None) -> list:
-        fields = fields or []
+    def get_table_row(self, _fields: Optional[list] = None) -> list:
+        _fields = _fields or []
         date_fields = ["created_at", "updated_at"]
 
         def _format(_val):
@@ -49,7 +50,7 @@ class BaseModel:
                 return ""
 
         res = []
-        for f in fields:
+        for f in _fields:
             val = getattr(self, f, "Unknown")
             if f in date_fields and isinstance(val, int):
                 val = _format(val)
@@ -72,6 +73,7 @@ class BaseModel:
             lines.append(f"{key.ljust(max_key_len)} {value_str}")
 
         return "\n".join(lines)
+
 
 @dataclass
 class Network(BaseModel):

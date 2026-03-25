@@ -1,4 +1,4 @@
-from tests.utils import network_objects_generator, host_object_generator
+from tests.conftest import network_objects_generator, host_object_generator
 from revolt_hostctl.app.storage import Storage
 from revolt_hostctl.app.models import Host, Network
 

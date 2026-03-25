@@ -2,7 +2,7 @@ import pytest
 import time
 
 from revolt_hostctl.app import app as app_module
-from tests.utils import assert_objs_equal
+from tests.conftest import assert_objs_equal
 
 
 @pytest.fixture
