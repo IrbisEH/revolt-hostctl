@@ -59,5 +59,5 @@ def print_help():
         "  -help, -h                     Show this help message\n"
         "\n"
         "_______\n"
-        "Object types: network, host"
+        "Object types: network, host, local_vm"
     )

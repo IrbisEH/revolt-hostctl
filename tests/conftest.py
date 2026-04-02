@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from revolt_hostctl.app.models import Host, Network
+from revolt_hostctl.app.models import Host, Network, LocalVm
 
 
 class FakeConfig:
@@ -34,6 +34,14 @@ def host_object_generator(count):
         name = f"{Host.__name__}{i}"
         mac_address = f"00:00:00:00:00:h{i}"
         yield Host(name=name, mac_address=mac_address)
+
+
+def local_vm_object_generator(count):
+    for i in range(count):
+        name = f"{Host.__name__}{i}"
+        mac_address = f"00:00:00:00:00:h{i}"
+        vm_dir: Path = Path(f"/tmp/vm{i}")
+        yield LocalVm(name=name, mac_address=mac_address, vm_dir=vm_dir)
 
 
 def assert_objs_equal(left, right, exclude=None) -> None:

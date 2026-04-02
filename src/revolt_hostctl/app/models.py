@@ -1,5 +1,7 @@
+from revolt_hostctl.app.utils import to_snake
 import uuid
 import time
+from pathlib import Path
 from typing import Optional
 from datetime import datetime, timezone
 from dataclasses import dataclass, field, fields
@@ -21,7 +23,7 @@ class BaseModel:
 
     @property
     def storage_key(self) -> str:
-        return self.__class__.__name__.lower()
+        return to_snake(self.__class__.__name__)
 
     def _ordered_items(self):
         data = {f.name: getattr(self, f.name) for f in fields(self)}
@@ -81,6 +83,11 @@ class Network(BaseModel):
     cidr: str | None = None
 
 
+class IpAddress(BaseModel):
+    address: str | None = None
+    network: Network | None = None
+
+
 @dataclass
 class Host(BaseModel):
     name: str | None = None
@@ -91,3 +98,8 @@ class Host(BaseModel):
     os: str | None = None
     os_version: str | None = None
     description: str | None = None
+
+
+@dataclass
+class LocalVm(Host):
+    vm_dir: Path | None = None

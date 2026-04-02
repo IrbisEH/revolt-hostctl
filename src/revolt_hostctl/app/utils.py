@@ -1,3 +1,16 @@
+def to_snake(name: str) -> str:
+    res = ""
+    for i, char in enumerate(name):
+        if char.isupper() and i > 0:
+            res += "_"
+        res += char.lower()
+    return res
+
+
+def to_camel(name: str) -> str:
+    return "".join(word.capitalize() for word in name.split("_"))
+
+
 def print_table(rows: list, headers: list) -> None:
     num_cols = len(rows[0])
     col_widths = [0] * num_cols

@@ -1,6 +1,6 @@
-from tests.conftest import network_objects_generator, host_object_generator
+from tests.conftest import network_objects_generator, host_object_generator, local_vm_object_generator
 from revolt_hostctl.app.storage import Storage
-from revolt_hostctl.app.models import Host, Network
+from revolt_hostctl.app.models import Host, Network, LocalVm
 
 
 class InMemoryAdapter:
@@ -31,7 +31,8 @@ def test_storage_unit_add_get_remove_methods():
 
     objects = [
         Network(name=f"{Network.__name__}1", cidr="10.0.0.0/24"),
-        Host(name=f"{Host.__name__}1", mac_address="aa:bb:cc:dd:ee:ff")
+        Host(name=f"{Host.__name__}1", mac_address="aa:bb:cc:dd:ee:ff"),
+        LocalVm(name=f"{LocalVm.__name__}1", mac_address="aa:bb:cc:dd:ee:ff", vm_dir="test")
     ]
 
     for obj in objects:
@@ -69,7 +70,8 @@ def test_storage_unit_save_load_list_methods():
 
     generators = [
         network_objects_generator(10),
-        host_object_generator(10)
+        host_object_generator(10),
+        local_vm_object_generator(10)
     ]
 
     obj_types = []

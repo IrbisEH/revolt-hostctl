@@ -1,9 +1,14 @@
 import time
-from revolt_hostctl.app.models import Network, Host
+from revolt_hostctl.app.models import Network, Host, LocalVm
+from revolt_hostctl.app.utils import to_snake
 
 
 class Storage:
-    CLASS_MAP = {'network': Network,'host': Host}
+    CLASS_MAP = {
+        "network": Network,
+        "host": Host,
+        "local_vm": LocalVm
+    }
     COLLECTIONS = tuple(CLASS_MAP.keys())
 
     def __init__(self, adapter):
@@ -30,20 +35,21 @@ class Storage:
                 db.set(attr_key, data)
 
     def get(self, obj_type: str, obj_id: str) -> Network | Host | None:
-        obj_type = obj_type.lower()
+        obj_type = to_snake(obj_type)
         self.valid_type(obj_type)
         data = getattr(self, obj_type)
         return data.get(obj_id)
 
     def list(self, obj_type: str):
-        obj_type = obj_type.lower()
+        obj_type = to_snake(obj_type)
         self.valid_type(obj_type)
         data = getattr(self, obj_type)
         return list(data.values())
 
     def add(self, obj: Network | Host) -> Network | Host:
         self.valid_obj(obj)
-        data = getattr(self, obj.storage_key)
+        storage_key = obj.storage_key
+        data = getattr(self, storage_key)
         data[obj.id] = obj
         return obj
 
@@ -53,7 +59,8 @@ class Storage:
 
     def remove(self, obj):
         self.valid_obj(obj)
-        data = getattr(self, obj.storage_key)
+        storage_key = obj.storage_key
+        data = getattr(self, storage_key)
         return data.pop(obj.id, None)
 
     def clean_all(self):
@@ -64,7 +71,8 @@ class Storage:
     def valid_obj(obj):
         check = [
             isinstance(obj, Network),
-            isinstance(obj, Host)
+            isinstance(obj, Host),
+            isinstance(obj, LocalVm)
         ]
 
         if not any(check):
