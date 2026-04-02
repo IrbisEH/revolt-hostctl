@@ -1,6 +1,7 @@
 from revolt_hostctl.app.utils import to_snake
 import uuid
 import time
+import hashlib
 from pathlib import Path
 from typing import Optional
 from datetime import datetime, timezone
@@ -15,11 +16,30 @@ def _ts_now() -> int:
     return int(time.time())
 
 
-@dataclass
+def _generate_deterministic_id(data: dict, fields: list[str]) -> str:
+    values = []
+    for f in fields:
+        val = data.get(f)
+        if val is None:
+            val = ""
+        values.append(str(val))
+    joined = "|".join(values)
+    return hashlib.md5(joined.encode()).hexdigest()
+
+
+@dataclass(kw_only=True)
 class BaseModel:
-    id: str = field(default_factory=lambda: uuid.uuid4().hex)
+    id: str = field(default=None)
     created_at: int = field(default_factory=_ts_now)
     updated_at: int = field(default_factory=_ts_now)
+
+    def __post_init__(self):
+        if self.id is None:
+            unique_fields = getattr(self, "__unique_fields__", None)
+            if unique_fields:
+                self.id = _generate_deterministic_id(self.__dict__, unique_fields)
+            else:
+                self.id = uuid.uuid4().hex
 
     @property
     def storage_key(self) -> str:
@@ -77,20 +97,23 @@ class BaseModel:
         return "\n".join(lines)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Network(BaseModel):
-    name: str | None = None
-    cidr: str | None = None
+    name: str
+    cidr: str
+    __unique_fields__ = ["name", "cidr"]
 
 
+@dataclass(kw_only=True)
 class IpAddress(BaseModel):
-    address: str | None = None
-    network: Network | None = None
+    address: str
+    network: Network
+    __unique_fields__ = ["address", "network"]
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Host(BaseModel):
-    name: str | None = None
+    name: str
     mac_address: str | None = None
     ip_addresses: set | None = None
 
@@ -99,7 +122,10 @@ class Host(BaseModel):
     os_version: str | None = None
     description: str | None = None
 
+    __unique_fields__ = ["name", "mac_address"]
 
-@dataclass
+
+@dataclass(kw_only=True)
 class LocalVm(Host):
-    vm_dir: Path | None = None
+    vm_dir: Path
+    __unique_fields__ = ["name", "mac_address", "vm_dir"]

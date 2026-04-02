@@ -30,6 +30,9 @@ def main():
         elif cmd == "-clean":
             app.clean_cmd()
 
+        elif cmd == "-parse":
+            app.parse_cmd(args)
+
         elif cmd == "-version":
             app.version_cmd()
 
@@ -55,6 +58,7 @@ def print_help():
         "  -remove <obj_type> <id=>      Remove an <obj_type> object by ID\n"
         "  -list <obj_type>              List all <obj_type> objects\n"
         "  -clean                        Delete all objects\n"
+        "  -parse                        Parse VmWare directory\n"
         "  -version                      Show version information\n"
         "  -help, -h                     Show this help message\n"
         "\n"
